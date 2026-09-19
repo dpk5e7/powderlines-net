@@ -8,7 +8,7 @@ Apparently, there's an [official API](https://wcc.sc.egov.usda.gov/awdbRestApi/s
 
 ## Overview
 
-Use our free API for accessing SNOTEL station data. Our API is useful for finding current snow levels in mountainous regions across the United States. 895 SNOTEL stations are available.
+Use our free API for accessing SNOTEL station data. Our API is useful for finding current snow levels in mountainous regions across the United States. 911 SNOTEL stations are available.
 
 ### [https://powderlines.kellysoftware.org/](https://powderlines.kellysoftware.org/)
 
