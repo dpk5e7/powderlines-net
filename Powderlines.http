@@ -1,0 +1,43 @@
+﻿@Powderlines_HostAddress = https://localhost:7239
+
+
+###
+GET {{Powderlines_HostAddress}}/api/stations/
+
+###
+GET {{Powderlines_HostAddress}}/api/stations/CO
+###
+GET {{Powderlines_HostAddress}}/api/stations?state=AK
+
+
+###
+GET {{Powderlines_HostAddress}}/api/station/335:CO:SNTL?days=2
+
+###
+GET {{Powderlines_HostAddress}}/api/station/578:MT:SNTL?days=3
+
+###
+GET {{Powderlines_HostAddress}}/api/station/335:CO:SNTL?start_date=2024-01-09&end_date=2024-01-12
+
+
+###
+GET {{Powderlines_HostAddress}}/api/closest_stations?lat=39.7392&lng=-104.9903&count=6&data=true&days=3
+
+###
+
+GET {{Powderlines_HostAddress}}/api/closest_stations?lat=39.7392&lng=-104.9903&count=6
+
+
+
+###
+GET {{Powderlines_HostAddress}}/api/stationsCount
+
+###
+GET {{Powderlines_HostAddress}}/api/stationsCount/CO
+###
+GET {{Powderlines_HostAddress}}/api/stationsCount?state=AK
+###
+
+
+###
+GET {{Powderlines_HostAddress}}/api/insert

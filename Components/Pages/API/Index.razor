@@ -1,0 +1,396 @@
+﻿@page "/api"
+@rendermode InteractiveServer
+
+<PageTitle>API</PageTitle>
+
+<h1>API</h1>
+
+<h2>Get all SNOTEL stations</h2>
+
+<p>
+	<strong>Description:</strong><br>
+	Returns basic information about all of the SNOTEL stations in the United States.
+</p>
+
+<p><strong>Endpoint:</strong> /stations</p>
+
+<p>
+	<strong>Request parameters:</strong>
+	<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Descriptions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>State</td>
+				<td>The state to retreive data from. (optional)</td>
+			</tr>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Response parameters:</strong><br>
+	The response comes as an array of objects. Here is a breakdown of a returned object.
+</p>
+
+<table class="table table-sm">
+	<thead>
+		<tr>
+			<th>Parameter</th>
+			<th>Descriptions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Name (string)</td>
+			<td>Name of the station</td>
+		</tr>
+		<tr>
+			<td>Triplet (string)</td>
+			<td>Unique identifier for the station. Formatted as ###:STATE:SNTL</td>
+		</tr>
+		<tr>
+			<td>Elevation (integer)</td>
+			<td>Elevation of the station in feet</td>
+		</tr>
+		<tr>
+			<td>Location (lat, lng object)</td>
+			<td>Latitude and longitude of the station</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>
+	<strong>Sample calls:</strong>
+	<ul>
+		<li>
+			<a class="link-primary" href="/api/stations"
+				 target="_blank">https://powderlines.kellysoftware.org/api/stations</a>
+		</li>
+		<li>
+			<a class="link-primary" href="/api/stations?state=CO"
+				 target="_blank">https://powderlines.kellysoftware.org/api/stations?state=CO</a>
+		</li>
+	</ul>
+</p>
+
+<p>
+	<strong>Sample response:</strong>
+	<pre>
+[
+  {
+    &quot;name&quot;: &quot;Berthoud Summit&quot;,
+    &quot;triplet&quot;: &quot;335:CO:SNTL&quot;,
+    &quot;elevation&quot;: 11300,
+    &quot;location&quot;: {
+      &quot;lat&quot;: 39.80392,
+      &quot;lng&quot;: -105.77789
+    }
+  },
+  {
+    &quot;name&quot;: &quot;Loveland Basin&quot;,
+    &quot;triplet&quot;: &quot;602:CO:SNTL&quot;,
+    &quot;elevation&quot;: 11400,
+    &quot;location&quot;: {
+      &quot;lat&quot;: 39.67433,
+      &quot;lng&quot;: -105.90133
+    }
+  },
+  {
+  ...
+  }
+]
+</pre>
+</p>
+
+<h2>Get snow info for a station</h2>
+
+<p>
+	<strong>Description:</strong><br>
+	Returns detailed information for the specified SNOTEL station.
+</p>
+
+<p><strong>Endpoint:</strong> /station/:id</p>
+
+<p>
+	<strong>Request parameters:</strong>
+	<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>ID (triplet)</td>
+				<td>
+					Station id in the form of ###:STATE:SNTL. Example: 335:CO:SNTL. Find the triplet for a particular
+					station through the /stations endpoint.
+				</td>
+			</tr>
+			<tr>
+				<td>Days (integer)</td>
+				<td>
+					Number of days information to retrieve from today. (optional - defaults to 5 unless using start_date
+					and end_date)
+				</td>
+			</tr>
+			<tr>
+				<td>Start date (YYYY-MM-DD)</td>
+				<td>Historical date to pull data from. Use in conjunction with end date. (optional)</td>
+			</tr>
+			<tr>
+				<td>End date (YYYY-MM-DD)</td>
+				<td>Historical date to pull data from. Use in conjunction with start date (optional)</td>
+			</tr>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Response parameters:</strong><br>
+	The response includes basic station information in addition to an array of snow data.
+	<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Date</td>
+				<td>Date measurement was taken</td>
+			</tr>
+			<tr>
+				<td>Snow Water Equivalent (in)</td>
+				<td>The amount of water contained within the snowpack.</td>
+			</tr>
+			<tr>
+				<td>Change In Snow Water Equivalent (in)</td>
+				<td>The change in the snow water equivalent from the last measurement (typically the past 24 hours).</td>
+			</tr>
+			<tr>
+				<td>Snow Depth (in)</td>
+				<td>Depth of snow in inches.</td>
+			</tr>
+			<tr>
+				<td>Change In Snow Depth (in)</td>
+				<td>The change in the snow depth from the last measurement (typically the past 24 hours).</td>
+			</tr>
+			<tr>
+				<td>Observed Air Temperature (degrees farenheit)</td>
+				<td>The observed air temperature, in degrees farenheit.</td>
+			</tr>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Sample calls:</strong>
+	<ul>
+		<li>
+			<a class="link-primary" href="/api/station/335:CO:SNTL"
+				 target="_blank">https://powderlines.kellysoftware.org/api/station/335:CO:SNTL</a>
+		</li>
+		<li>
+			<a class="link-primary" href="/api/station/335:CO:SNTL?days=10"
+				 target="_blank">https://powderlines.kellysoftware.org/api/station/335:CO:SNTL?days=10</a>
+		</li>
+		<li>
+			<a class="link-primary"
+				 href="/api/station/335:CO:SNTL?start_date=2023-01-09&end_date=2023-01-11"
+				 target="_blank">https://powderlines.kellysoftware.org/api/station/335:CO:SNTL?start_date=2023-01-09&amp;end_date=2023-01-11</a>
+		</li>
+	</ul>
+</p>
+
+<p>
+	<strong>Sample response:</strong>
+	<pre>
+{
+  &quot;station_information&quot;: {
+    &quot;name&quot;: &quot;Berthoud Summit&quot;,
+    &quot;triplet&quot;: &quot;335:CO:SNTL&quot;,
+    &quot;elevation&quot;: 11300,
+    &quot;location&quot;: {
+      &quot;lat&quot;: 39.80392,
+      &quot;lng&quot;: -105.77789
+    }
+  },
+  &quot;data&quot;: [
+    {
+      &quot;Date&quot;: &quot;2023-01-12&quot;,
+      &quot;Snow Water Equivalent (in)&quot;: &quot;9.8&quot;,
+      &quot;Change In Snow Water Equivalent (in)&quot;: &quot;0.3&quot;,
+      &quot;Snow Depth (in)&quot;: &quot;43&quot;,
+      &quot;Change In Snow Depth (in)&quot;: &quot;3&quot;,
+      &quot;Observed Air Temperature (degrees farenheit)&quot;: &quot;10&quot;
+    },
+    {
+      &quot;Date&quot;: &quot;2023-01-13&quot;,
+      &quot;Snow Water Equivalent (in)&quot;: &quot;9.8&quot;,
+      &quot;Change In Snow Water Equivalent (in)&quot;: &quot;0.0&quot;,
+      &quot;Snow Depth (in)&quot;: &quot;42&quot;,
+      &quot;Change In Snow Depth (in)&quot;: &quot;-1&quot;,
+      &quot;Observed Air Temperature (degrees farenheit)&quot;: &quot;11&quot;
+    },
+    {
+      ...
+    }
+  ]
+}
+</pre>
+</p>
+
+<h2>Find closest station to a latitude and longitude:</h2>
+
+<p>
+	<strong>Description:</strong><br>
+	Returns detailed information for the closest SNOTEL stations to a geographic point.
+</p>
+
+<p><strong>Endpoint:</strong> /closest_stations</p>
+
+<p>
+	<strong>Request parameters:</strong>
+	<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>lat (float)</td>
+				<td>Latitude to base search off of. (required)</td>
+			</tr>
+			<tr>
+				<td>lng (float)</td>
+				<td>Longitude to base search off of. (required)</td>
+			</tr>
+			<tr>
+				<td>count (integer)</td>
+				<td>number of station&#39;s to return (optional - defaults to 3, maximum of 5)</td>
+			</tr>
+			<tr>
+				<td>data (boolean)</td>
+				<td>
+					Setting to true will enable fetching of snow info from the stations. Note that this might be slow
+					depending on the number of stations you&#39;re requesting information from.
+				</td>
+			</tr>
+			<tr>
+				<td>days (integer)</td>
+				<td>Number of days information to retrieve from today. (optional - defaults to 5)</td>
+			</tr>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Response parameters:</strong><br>
+	The response is an array of stations including their basic information in addition to an array of snow data.
+	<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Date</td>
+				<td>Date measurement was taken</td>
+			</tr>
+			<tr>
+				<td>Snow Water Equivalent (in)</td>
+				<td>The amount of water contained within the snowpack.</td>
+			</tr>
+			<tr>
+				<td>Change In Snow Water Equivalent (in)</td>
+				<td>The change in the snow water equivalent from the last measurement (typically the past 24 hours).</td>
+			</tr>
+			<tr>
+				<td>Snow Depth (in)</td>
+				<td>Depth of snow in inches.</td>
+			</tr>
+			<tr>
+				<td>Change In Snow Depth (in)</td>
+				<td>The change in the snow depth from the last measurement (typically the past 24 hours).</td>
+			</tr>
+			<tr>
+				<td>Observed Air Temperature (degrees farenheit)</td>
+				<td>The observed air temperature, in degrees farenheit.</td>
+			</tr>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Sample calls:</strong>
+	<ul>
+		<li>
+			<a class="link-primary"
+				 href="/api/closest_stations?lat=39.7392&lng=-104.9903&count=3&data=true&days=3"
+				 target="_blank">https://powderlines.kellysoftware.org/api/closest_stations?lat=39.7392&amp;lng=-104.9903&amp;count=3&amp;data=true&amp;days=3</a>
+		</li>
+		<li>
+			<a class="link-primary" href="/api/closest_stations?lat=39.7392&lng=-104.9903&count=4"
+				 target="_blank">https://powderlines.kellysoftware.org/api/closest_stations?lat=39.7392&amp;lng=-104.9903&amp;count=4</a>
+		</li>
+	</ul>
+</p>
+
+<p>
+	<strong>Sample response:</strong>
+	<pre>
+[
+  {
+    &quot;station_information&quot;: {
+      &quot;name&quot;: &quot;Echo Lake&quot;,
+      &quot;triplet&quot;: &quot;936:CO:SNTL&quot;,
+      &quot;elevation&quot;: 10600,
+      &quot;location&quot;: {
+        &quot;lat&quot;: 39.65627,
+        &quot;lng&quot;: -105.59345
+      }
+    },
+    &quot;data&quot;: [
+      {
+        &quot;Date&quot;: &quot;2023-01-19&quot;,
+        &quot;Snow Water Equivalent (in)&quot;: &quot;3.2&quot;,
+        &quot;Change In Snow Water Equivalent (in)&quot;: &quot;0.1&quot;,
+        &quot;Snow Depth (in)&quot;: &quot;20&quot;,
+        &quot;Change In Snow Depth (in)&quot;: &quot;0&quot;,
+        &quot;Observed Air Temperature (degrees farenheit)&quot;: &quot;8&quot;
+      },
+      {
+        &quot;Date&quot;: &quot;2023-01-20&quot;,
+        &quot;Snow Water Equivalent (in)&quot;: &quot;3.3&quot;,
+        &quot;Change In Snow Water Equivalent (in)&quot;: &quot;0.1&quot;,
+        &quot;Snow Depth (in)&quot;: &quot;19&quot;,
+        &quot;Change In Snow Depth (in)&quot;: &quot;-1&quot;,
+        &quot;Observed Air Temperature (degrees farenheit)&quot;: &quot;12&quot;
+      },
+      {
+        ...
+      }
+    ]
+  },
+  {
+    ...
+  }
+]
+   </pre>
+</p>
+
+@code {
+
+}

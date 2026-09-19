@@ -1,0 +1,60 @@
+﻿@page "/map"
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
+<HeadContent>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</HeadContent>
+
+<div @ref="mapElement" class="map" style="height: 800px;"></div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger" role="alert">
+		@errorMessage
+	</div>
+}
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+@code {
+
+	private ElementReference mapElement;
+	private string errorMessage = string.Empty;
+	private IJSObjectReference? module;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			try
+			{
+				module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/snotel.js");
+
+				await module.InvokeVoidAsync("initializeMap", mapElement);
+			}
+			catch (Exception ex)
+			{
+				errorMessage = $"An error occurred while initializing the map: {ex.Message}";
+				StateHasChanged();
+			}
+		}
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (module is not null)
+		{
+			try
+			{
+				await module.InvokeVoidAsync("disposeMap", "map");
+				await module.DisposeAsync();
+			}
+			catch (JSDisconnectedException)
+			{
+				// The Blazor Server circuit has already disconnected.
+			}
+		}
+	}
+}

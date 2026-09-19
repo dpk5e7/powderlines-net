@@ -1,0 +1,153 @@
+﻿@page "/stations"
+
+@rendermode InteractiveServer
+
+@using System.Globalization
+
+@inject ISnotelService _snotelService
+
+@attribute [StreamRendering]
+
+<PageTitle>SnotelStations</PageTitle>
+
+<h1>Snotel Stations</h1>
+
+@if (stations == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div class="container">
+		<div class="row">
+			<div class="col-6">
+				<div class="input-group mb-3">
+					<label class="input-group-text" for="stateSelect">Filter</label>
+					<select class="form-select" id="stateSelect" @bind="selectedState" @bind:after="FilterStatesAsync">
+						<option value="all" selected>All</option>
+						@foreach (var state in states)
+						{
+							<option value="@state">@state</option>
+						}
+					</select>
+				</div>
+			</div>
+			<div class="col text-end align-middle">
+				Displaying @stations.Count stations.
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+				<div class="table-responsive">
+					<table class="table table-sm table-hover w-100">
+						<thead>
+							<tr>
+								<th><button class="btn btn-link p-0 text-black text-decoration-none" style="text-decoration:none; font-weight:bold" @onclick="SortByName">Name @SortIndicator("Name")</button></th>
+								<th><button class="btn btn-link p-0 text-black text-decoration-none" style="text-decoration:none; font-weight:bold" @onclick="SortByState">State @SortIndicator("State")</button></th>
+								<th><button class="btn btn-link p-0 text-black text-decoration-none" style="text-decoration:none; font-weight:bold" @onclick="SortByTriplet">Triplet @SortIndicator("Triplet")</button></th>
+								<th><button class="btn btn-link p-0 text-black text-decoration-none" style="text-decoration:none; font-weight:bold" @onclick="SortByElevation">Elevation (ft) @SortIndicator("Elevation")</button></th>
+								<th>Location</th>
+							</tr>
+						</thead>
+						<tbody class="table-group-divider">
+							@foreach (var station in stations)
+							{
+								<tr>
+									<td>@station.Name</td>
+									<td>@station.Triplet.Split(':')[1]</td>
+									<td>@station.Triplet</td>
+									<td>@String.Format(CultureInfo.InvariantCulture, "{0:#,#}", station.Elevation)</td>
+									<td>@station.Location.Lat, @station.Location.Lng</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	
+}
+
+@code {
+	private List<StationInformation>? stations;
+	private List<string> states = new();
+
+	private string selectedState = "all";
+
+	private string currentSortColumn = "Name";
+	private bool sortAscending = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		stations = await _snotelService.GetStationsAsync("all");
+
+		foreach (var station in stations)
+		{
+			var state = station.Triplet.Split(':')[1];
+			if (!states.Contains(state))
+			{
+				states.Add(state);
+			}
+		}
+		states.Sort();
+	}
+
+	private async Task FilterStatesAsync()
+	{
+		stations = await _snotelService.GetStationsAsync(selectedState);
+		SortStations();
+		StateHasChanged();
+	}
+
+	private void SortStations()
+	{
+		if (stations == null) return;
+
+		switch (currentSortColumn)
+		{
+			case "Name":
+				stations = sortAscending ? stations.OrderBy(station => station.Name).ToList() : stations.OrderByDescending(station => station.Name).ToList();
+				break;
+			case "State":
+				stations = sortAscending ? stations.OrderBy(station => station.Triplet.Split(':')[1]).ToList() : stations.OrderByDescending(station => station.Triplet.Split(':')[1]).ToList();
+				break;
+			case "Triplet":
+				stations = sortAscending ? stations.OrderBy(station => Int32.Parse(station.Triplet.Split(':')[0])).ToList() : stations.OrderByDescending(station => Int32.Parse(station.Triplet.Split(':')[0])).ToList();
+				break;
+			case "Elevation":
+				stations = sortAscending ? stations.OrderBy(station => station.Elevation).ToList() : stations.OrderByDescending(station => station.Elevation).ToList();
+				break;
+		}
+	}
+
+	private void SortByColumn(string column)
+	{
+		if (currentSortColumn == column)
+		{
+			sortAscending = !sortAscending;
+		}
+		else
+		{
+			currentSortColumn = column;
+			sortAscending = true;
+		}
+		SortStations();
+	}
+
+	private void SortByName() => SortByColumn("Name");
+	private void SortByState() => SortByColumn("State");
+	private void SortByTriplet() => SortByColumn("Triplet");
+	private void SortByElevation() => SortByColumn("Elevation");
+
+	private MarkupString SortIndicator(string column)
+	{
+		if (currentSortColumn != column) return (MarkupString)"";
+		return sortAscending
+			? (MarkupString)"<i class=\"bi bi-caret-up-fill\"></i>"
+			: (MarkupString)"<i class=\"bi bi-caret-down-fill\"></i>";
+	}
+}

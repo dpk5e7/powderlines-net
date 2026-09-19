@@ -1,0 +1,36 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href=""><img src="/images/logo.png" alt="Logo" />Powderlines</a>
+	</div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+	<nav class="nav flex-column">
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<i class="bi bi-house-door-fill"></i>&nbsp; Home
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="api">
+				<i class="bi bi-braces"></i>&nbsp; API
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="stations">
+				<i class="bi bi-snow2"></i>&nbsp; Snotel Stations
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="about">
+				<i class="bi bi-info-circle"></i>&nbsp; About
+			</NavLink>
+		</div>
+	</nav>
+</div>
+
